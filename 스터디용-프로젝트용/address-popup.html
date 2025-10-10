@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>주소 변경</title>
+  <style>
+    body { 
+        font-family: system-ui, sans-serif; margin: 16px; 
+    }
+    h3 { 
+        margin: 0 0 12px; 
+    }
+    label { 
+        display: block; margin-bottom: 6px; 
+    }
+    input[type="text"] {
+         width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px; 
+        }
+    .actions { 
+        margin-top: 12px; display: flex; gap: 8px; justify-content: flex-end; 
+    }
+    button { 
+        padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; 
+    }
+    #okBtn { 
+        background: #333; color: #fff; border-color: #333; 
+    }
+  </style>
+</head>
+<body>
+  <h3>주소 변경</h3>
+  <label for="addrInput">새 주소</label>
+  <input type="text" id="addrInput" placeholder="새 주소를 입력하세요" />
+  <div class="actions">
+    <button type="button" id="cancelBtn">취소</button>
+    <button type="button" id="okBtn">확인</button>
+  </div>
+
+  <script>
+    const input = document.getElementById('addrInput');
+    const okBtn = document.getElementById('okBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    // Enter로 확인
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') okBtn.click(); });
+
+    okBtn.addEventListener('click', () => {
+      const addr = (input.value || '').trim();
+      if (!addr) { input.focus(); return; }
+      if (window.opener && !window.opener.closed) {
+        // 부모 페이지에 주소 전달(저장 없이 화면만 변경)
+        window.opener.postMessage({ type: 'ADDRESS_UPDATE', address: addr }, '*');
+      }
+      window.close();
+    });
+
+    cancelBtn.addEventListener('click', () => window.close());
+
+    // 자동 포커스
+    window.addEventListener('load', () => input.focus());
+  </script>
+</body>
+</html>
