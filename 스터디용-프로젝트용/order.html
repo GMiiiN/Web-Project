@@ -71,17 +71,7 @@
                     <option value="2">택배함에 넣어주세요</option>
                     <option value="3">직접 입력</option>
                 </select>
-                <div id="product-list">
-                    <div class="product-info-row">
-                        <div class="product-img">
-                            <img src="cloth.jpg" alt="상품 이미지">
-                        </div>
-                        <div class="product-info">
-                            <h4>상품명</h4>
-                            <p>상품 설명 텍스트</p>
-                        </div>
-                    </div>
-                </div>
+                <div id="product-list"></div>
             </div>
             <hr>
                 <div id="purchase-choice">
@@ -106,15 +96,15 @@
             <div id="price-box">
                 <div class="price-row">
                     <span class="price-label">상품 금액</span>
-                    <span class="price-value">50,000원</span>
+                    <span class="price-value" id="subtotal-price">0원</span>
                 </div>
                 <div class="price-row">
                     <span class="price-label">할인 금액</span>
-                    <span class="price-value">-5,000원</span>
+                    <span class="price-value" id="discount-price">0원</span>
                 </div>
                 <div class="price-row">
                     <span class="price-label">총 결제 금액</span>
-                    <span class="price-value">45,000원</span>
+                    <span class="price-value" id="total-price">0원</span>
                 </div>
             </div>
             <input type="button" value="주문하기" id="order-button">
