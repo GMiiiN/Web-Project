@@ -1,0 +1,66 @@
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 40px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.gallery {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.gallery img {
+  width: 220px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease;
+}
+
+.gallery img:hover {
+  transform: scale(1.05);
+}
+
+.info {
+  text-align: center;
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  width: 400px;
+}
+
+.info h1 {
+  margin-bottom: 10px;
+}
+
+.info p {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+#add-to-cart-detail {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  margin-top: 15px;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 6px;
+}
+
+#add-to-cart-detail:hover {
+  background-color: #2980b9;
+}
