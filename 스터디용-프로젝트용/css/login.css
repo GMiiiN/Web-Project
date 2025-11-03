@@ -1,0 +1,46 @@
+body{ 
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: white;
+}
+div.login-box { /* 로그인 폼 박스 */
+    width: 500px;
+    border: 1px solid #ccc;
+    text-align: center;
+    background-color: transparent;
+    backdrop-filter: blur(20px);
+    border-radius: 8px;
+}
+input[type="text"], input[type="password"] { /*Id 비번 텍스트창*/
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+input[type="submit"] { /*로그인 버튼*/
+    width: 85%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+input[type="submit"]:hover { /*로그인 버튼 마우스 올렸을 때*/
+    background-color: #45a049;
+}
+a#resister { /*회원가입 텍스트*/
+    text-decoration: none;
+    color: blue;
+}
+p#title { /*로그인 제목*/
+    font-size: 24px;
+    font-weight: bold;
+    margin: 20px 0;
+}
