@@ -15,8 +15,8 @@ app.use(session({
 app.use(express.static(path.join(__dirname, '..')));
 
 app.get('/', (req, res) => {
-    const loginPath = path.join(__dirname, '..', 'html', 'login.html');
-    res.sendFile(loginPath, (err) => {
+    const indexPath = path.join(__dirname, '..', 'html',  'index.html');
+    res.sendFile(indexPath, (err) => {
         if (err) {
             console.error('sendFile error:', err);
             return res.status(err.status || 500).send('login.html을 찾을 수 없습니다.');
@@ -26,12 +26,22 @@ app.get('/', (req, res) => {
 
 const User = { id: 'admin', password: 'admin1234' };
 
+app.get(['/login', '/login/'], (req, res) => {
+    const loginPath = path.join(__dirname, '..', 'html', 'login.html');
+    res.sendFile(loginPath, err => {
+        if(err) {
+            console.error('sendFile Error', err);
+            return res.status(err.status || 500).send('login 페이지를 찾을 수 없습니다.');
+        }
+    });
+});
+
 app.post(['/login','/login/'], (req, res) => {
     console.log('login attempt body:', req.body); // 추가: 들어오는 폼 데이터 확인용 로그
     const {userid, userpw} = req.body || {};
     if (userid === User.id && userpw === User.password) {
         req.session.user = userid;
-        res.send(`<h1>Login Successful</h1><p>Welcome, ${userid}!</p>`);
+        res.sendFile(path.join(__dirname, '..', 'html', 'index.html'));
     } else {
         res.send('<h1>Login Failed</h1><p>Invalid username or password.</p>');
     }

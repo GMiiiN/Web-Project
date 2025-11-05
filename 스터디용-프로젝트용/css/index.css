@@ -36,7 +36,7 @@ nav {
     margin: 0;
     padding: 0;
 }
-
+        
 .pc-menu ul:first-child {
     flex: 1;
     justify-content: center;
@@ -51,6 +51,32 @@ nav {
     color: #fff;
     text-decoration: none;
     padding: 0 5px;
+}
+
+.pc-menu .menu-icons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pc-menu .menu-icons li {
+    list-style: none;
+}
+
+.pc-menu .menu-icons form {
+    display: inline-flex;
+}
+
+.pc-menu .menu-icons button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
 }
 
 .hamburger-menu {
