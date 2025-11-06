@@ -2,17 +2,43 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const path = require('path');
+const mysql = require('mysql2');
+const dotenv = require('dotenv');
+const cors = require('cors');
+
+// express app 생성
 const app = express();
 
+// .env 파일의 환경변수 로드
+dotenv.config(); // .env 파일을 읽어 아래의 MYSQL 연결설정을 가능하게함.
+
+// MYSQL 연결 설정
+const DB = mysqul.createConnection({
+    host: process.env.DB_HOST, // 127.0.0.1 같은 DB서버 주소
+    user: process.env.DB_USER, // DB 로그인 아이디
+    password: process.env.DB_PASSWORD, // DB 로그인 비밀번호
+    database: process.env.DB_NAME, //사용할 데이터베이스 이름
+    port: +process.env.DB.PORT // DB 포트 번호 + 는 문자열을 숫자로 변환
+});
+app.user(express.json()); // 요청 본문이 JSON이면 자동으로 JS 객체로 파싱해 req.body에 넣음
+app.use(cors()); // CORS 허용 / 브라우저 교차 출처 정책 때문에 막히는걸 허용해줌.
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(session({
     secret: 'secret-key',
     resave: false,
     saveUninitialized: true
 }));
-
 // 정적 파일 서빙을 위한 미들웨어 추가 (경로를 안전하게 처리)
 app.use(express.static(path.join(__dirname, '..')));
+
+//DB 연결 테스트
+DB.connect(err => {
+    if(err){
+        console.error("MySQL 연결 실패", err); // 실패시
+        return;
+    }
+    console.log("MySQL 연결 성공"); // 성공시
+})
 
 app.get('/', (req, res) => {
     const indexPath = path.join(__dirname, '..', 'html',  'index.html');
