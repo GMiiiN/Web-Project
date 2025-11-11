@@ -35,7 +35,7 @@ function renderProducts() {
             // 상품을 표시하는 HTML 템플릿
             htmlContent += `
                 <article data-product-id="${product.id}">
-                    <a href="detail.html?id=${product.id}"> 
+                    <a href="/detail?id=${product.id}"> 
                         <img src="${product.imgUrl}" alt="${product.alt}">
                     </a>
                     
@@ -47,7 +47,7 @@ function renderProducts() {
         });
         
         // 기존 제목/부제목을 유지하고, 그 뒤에 상품 목록을 추가
-        container.innerHTML += htmlContent; 
+        container.innerHTML = htmlContent; 
     };
 
     // [2] 정의된 범용 함수를 사용하여 세 섹션을 모두 렌더링
@@ -113,3 +113,11 @@ function loadProductDetail() {
     gallery.appendChild(img);
   }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const listSection = document.getElementById('new-arrivals-container');
+  if (listSection) renderProducts();
+
+  const detailSection = document.getElementById('product-info');
+  if (detailSection) loadProductDetail();
+});
