@@ -70,6 +70,9 @@ app.get('/cart', (req, res) => {
 app.get('/order', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'html', 'order.html'));
 });
+app.get('/search', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'html', 'search.html'));
+});
 
 // 로그인 기능
 app.post('/login', (req, res) => {
@@ -132,10 +135,30 @@ app.get('/api/products/:id', (req, res) => {
         res.json(result[0]);
     });
 });
+// 상품 검색 API
+app.get('/api/search', (req, res) => {
+    const keyword = req.query.keyword;
+    if(!keyword || keyword.trim() === ''){
+        return res.json([]); // 검색어 없으면 빈 배열 반환
+    }
 
-// ------------------------------
-// 🛒 장바구니 API
-// ------------------------------
+    const sql = `
+        SELECT id, name, price, main_image
+        FROM products
+        WHERE name LIKE ?
+    `;
+
+    DB.query(sql, [`%${keyword}%`], (err, result) => {
+        if (err) {
+            console.error("검색 실패:", err);
+            return res.status(500).json({ error: "DB 오류" });
+        }
+        res.json(result);
+    });
+});
+
+
+// 장바구니 API
 
 // 장바구니 담기
 app.post('/api/cart', requireLogin, (req, res) => {

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hansung Mall - Search</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/search.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script defer src="../js/search.js"></script>
+</head>
+<body>
+    <header>
+        <div class="menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+
+        <h3>Hansung Mall</h3>
+        
+        <nav class="pc-menu">
+            <ul>
+                <li><a href="/">All</a></li>
+                <li><a href="#">BEST</a></li>
+                <li><a href="#">OUTER</a></li>
+                <li><a href="#">TOP</a></li>
+                <li><a href="#">BOTTOM</a></li>
+                <li><a href="#">ACC&BAG</a></li>
+                <li><a href="#">COMMUNITY</a></li>
+            </ul>
+            <ul class="menu-icons">
+                <li>
+                    <form action="/search" method="get">
+                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+                </li>
+                <li>
+                    <form action="/login" method="get">
+                        <button type="submit"><i class="fa-solid fa-circle-info"></i></button>
+                    </form>
+                </li>
+                <li>
+                    <form action="/cart" method="get">
+                        <button type="submit"><i class="fa-solid fa-cart-shopping"></i></button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <nav class="hamburger-menu">
+            <ul>
+                <li><a href="/">All</a></li>
+                <li><a href="#">BEST</a></li>
+                <li><a href="#">OUTER</a></li>
+                <li><a href="#">TOP</a></li>
+                <li><a href="#">BOTTOM</a></li>
+                <li><a href="#">ACC&BAG</a></li>
+                <li><a href="#">COMMUNITY</a></li>
+            </ul>
+
+            <div class="menu-footer">
+                <p class="title">CS CENTER</p>
+                <p class="phone">📞 010-7373-3564</p>
+                <p class="notice">유선상담은 진행하지 않습니다.<br>한성몰 카카오톡 채널을 이용해주세요.</p>
+                <p class="hours">운영 시간 : AM 10:00 ~ PM 06:00<br>점심 시간 : PM 1:00 ~ PM 02:00<br>휴무일 : SAT, SUN, OFF</p>
+                <p class="copyright">Copyright © Hansung Mall All Rights Reserved</p>
+                <p class="followus">FOLLOW US</p>
+                <p class="instagram">@INSTAGRAM</p>
+            </div>
+        </nav>
+    </header>
+
+    <main class="search-page">
+        <section class="search-hero">
+            <p class="eyebrow">Search</p>
+            <h1>찾고 싶은 상품을 입력하세요</h1>
+            <p class="desc">브랜드, 카테고리 또는 키워드로 한 번에 찾아보세요.</p>
+
+            <form id="search-form" class="search-form" autocomplete="off">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="searchInput" type="text" placeholder="예) 티셔츠" />
+                <button id="searchBtn" type="submit">검색</button>
+            </form>
+        </section>
+
+        <section class="search-results">
+            <div id="results-empty" class="results-empty">검색어를 입력하면 결과가 여기에 표시됩니다.</div>
+            <div id="results-grid" class="results-grid" hidden></div>
+        </section>
+    </main>
+
+    <script>
+        (function initMenuToggle() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navMenu = document.querySelector('.hamburger-menu');
+            if (!menuToggle || !navMenu) return;
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        })();
+    </script>
+</body>
+</html>
