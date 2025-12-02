@@ -1,11 +1,21 @@
-const User_ID = 1;
-
 let currentCartItems = [];
 let currentTotalPrice = 0;
+let orderUser = null;
+
+async function requireOrderUser() {
+    if (orderUser) return orderUser;
+    const res = await fetch('/api/me');
+    if (!res.ok) throw new Error('AUTH');
+    const data = await res.json();
+    if (!data.loggedIn) throw new Error('AUTH');
+    orderUser = data.user;
+    return orderUser;
+}
 
 //1. order 페이지에서 사용할 장바구니 정보 불러오기
 async function loadCartForOrder(){
-    const res = await fetch(`/api/cart/${USER_ID}`);
+    await requireOrderUser();
+    const res = await fetch(`/api/cart`);
     if(!res.ok) throw new Error("장바구니 조회 실패");
 
     const items = await res.json();
@@ -52,8 +62,8 @@ function renderOrderCart(items){
 
 //3. 주문 생성 요청
 async function createOrder(){
+    await requireOrderUser();
     const body = {
-        user_id: USER_ID,
         total_price: currentTotalPrice,
     };
 
@@ -63,19 +73,15 @@ async function createOrder(){
         body: JSON.stringify(body),
     });
 
-    if (!res.ok) throw new Error("장바구니 조회 실패");
+    if (!res.ok) throw new Error("주문 생성 실패");
 
-    const items = await res.json();
-    await Promise.all(
-        items.map((item) => {
-            fetch(`/api/cart/${item.cart_id}`, {method: "DELETE"})
-        })
-    );
+    return res.json();
 }
 
 //4. 주문 후 장바구니 비우기
 async function clearCartAfterOrder() {
-    const res = await fetch(`/api/cart/${USER_ID}`);
+    await requireOrderUser();
+    const res = await fetch(`/api/cart`);
     if (!res.ok) throw new Error("장바구니 조회 실패");
     const items = await res.json();
     await Promise.all( 
@@ -112,18 +118,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const purchaseBox = document.getElementById("purchase-box");
     if (!purchaseBox) return; // order.html 이 아니면 아무 것도 안 함
 
-    loadCartForOrder().catch((err) => {
-        console.error(err);
-        alert("주문 정보를 불러오지 못했습니다.");
-    });
+    requireOrderUser()
+        .then(loadCartForOrder)
+        .catch((err) => {
+            console.error(err);
+            if (err.message === 'AUTH') {
+                alert('로그인 후 이용해 주세요.');
+                window.location.href = '/login';
+            } else {
+                alert("주문 정보를 불러오지 못했습니다.");
+            }
+        });
 
     const orderForm = purchaseBox.querySelector("form");
     if (orderForm) {
         orderForm.addEventListener("submit", (e) => {
-        handleOrderSubmit(e).catch((err) => {
-            console.error(err);
-            alert("주문 처리에 실패했습니다.");
+            handleOrderSubmit(e).catch((err) => {
+                console.error(err);
+                alert("주문 처리에 실패했습니다.");
+            });
         });
-    });
     }
 });

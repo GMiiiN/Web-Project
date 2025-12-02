@@ -1,6 +1,18 @@
-const USER_ID = 1; // 이름 통일
-
 let allProducts = [];
+let currentUser = null;
+
+async function fetchCurrentUser() {
+  try {
+    const res = await fetch('/api/me');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.loggedIn) {
+      currentUser = data.user;
+    }
+  } catch (err) {
+    console.error('세션 확인 실패', err);
+  }
+}
 
 //DB에서 상품목록 가져오기
 async function fetchProducts() {
@@ -54,8 +66,9 @@ function renderProducts() {
 
 // 장바구니 추가
 async function addToCart(productId) {
-  if (!USER_ID) {
+  if (!currentUser) {
     alert("로그인 후 이용해 주세요.");
+    window.location.href = "/login";
     return;
   }
   try {
@@ -63,7 +76,6 @@ async function addToCart(productId) {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        user_id: USER_ID,
         product_id : productId,
         quantity: 1,
       }),
@@ -78,25 +90,13 @@ async function addToCart(productId) {
 
 window.addToCart = addToCart;
 
-// 주문 생성
-async function createOrder() {
-  const body = { user_id: USER_ID, total_price: currentTotalPrice };
-  const res = await fetch("/api/order", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error("주문 생성 실패");
-  return res.json(); // message만 쓰면 됨
-}
-
 // index 페이지에서만 실행되도록 설정
 document.addEventListener("DOMContentLoaded", async () => {
   const listSection = document.getElementById("new-arrivals-container");
   if (!listSection) return; // index가 아니면 아무 것도 안 함
 
   try {
-    await fetchProducts();
+    await Promise.all([fetchCurrentUser(), fetchProducts()]);
     renderProducts();
   } catch (err) {
     console.error(err);

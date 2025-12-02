@@ -67,22 +67,24 @@
         </nav>
     </header>
     
-    <main>
-        <!--섹션 부분은 js에서 코드로 삽입-->
-         <section class="NEWARRIVAL" id="new-arrivals-container">
-            <h2>NEW ARRIVALS</h2>
-            <p class="subtitle">새롭게 업데이트 된 신제품을 만나보세요.</p>
-         </section>
+     <main>
+            <section class="NEWARRIVAL">
+                <h2>NEW ARRIVALS</h2>
+                <p class="subtitle">새롭게 업데이트 된 신제품을 만나보세요.</p>
+                <div class="product-grid" id="new-arrivals-container"></div>
+            </section>
 
-        <section class="WEEKLYBESTITEM" id="weekly-best-container">
-            <h2>WEEKLY BEST ITEM</h2>
-            <p class="subtitle">이번주 가장 사랑받은 제품을 만나보세요.</p>
-         </section>
+          <section class="WEEKLYBESTITEM">
+                <h2>WEEKLY BEST ITEM</h2>
+                <p class="subtitle">이번주 가장 사랑받은 제품을 만나보세요.</p>
+                <div class="product-grid" id="weekly-best-container"></div>
+            </section>
 
-         <section class="BESTSELLER" id="best-seller-container">
-            <h2>BEST SELLER</h2>
-            <p class="subtitle">가장 있기있는 베스트 제품을 만나보세요.</p>
-         </section>
+            <section class="BESTSELLER">
+                <h2>BEST SELLER</h2>
+                <p class="subtitle">가장 있기있는 베스트 제품을 만나보세요.</p>
+                <div class="product-grid" id="best-seller-container"></div>
+            </section>
     </main>
 
     <footer>
@@ -91,13 +93,15 @@
 
     <script src="../js/script.js"></script>
     <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navMenu = document.querySelector('.hamburger-menu');
-
-        menuToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');    
-        });
-        document.addEventListener('DOMContentLoaded', renderProducts);
+        // 메뉴 버튼 토글만 담당 (상품 렌더링은 script.js에서 처리)
+        (function initMenuToggle() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navMenu = document.querySelector('.hamburger-menu');
+            if (!menuToggle || !navMenu) return;
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        })();
     </script>
 </body>
 </html>

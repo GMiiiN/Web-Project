@@ -1,34 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>장바구니</title>
+    <title>Hansung Mall - Cart</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/cart.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <header>
-        <h2>장바구니</h2>
-        <hr>
-        <form action="/" method="get"><input type="submit" value="쇼핑 계속하기"></form>
-        <form action="/order" method="get"><input type="submit" value="주문하러 가기"></form>
+        <div class="menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+
+        <h3>Hansung Mall</h3>
+        
+        <nav class="pc-menu">
+            <ul>
+                <li><a href="/">All</a></li>
+                <li><a href="#">BEST</a></li>
+                <li><a href="#">OUTER</a></li>
+                <li><a href="#">TOP</a></li>
+                <li><a href="#">BOTTOM</a></li>
+                <li><a href="#">ACC&BAG</a></li>
+                <li><a href="#">COMMUNITY</a></li>
+            </ul>
+            <ul class="menu-icons">
+                <li>
+                    <form action="/search" method="get">
+                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+                </li>
+                <li>
+                    <form action="/login" method="get">
+                        <button type="submit"><i class="fa-solid fa-circle-info"></i></button>
+                    </form>
+                </li>
+                <li>
+                    <form action="/cart" method="get">
+                        <button type="submit"><i class="fa-solid fa-cart-shopping"></i></button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <nav class="hamburger-menu">
+            <ul>
+                <li><a href="/">All</a></li>
+                <li><a href="#">BEST</a></li>
+                <li><a href="#">OUTER</a></li>
+                <li><a href="#">TOP</a></li>
+                <li><a href="#">BOTTOM</a></li>
+                <li><a href="#">ACC&BAG</a></li>
+                <li><a href="#">COMMUNITY</a></li>
+            </ul>
+
+            <div class="menu-footer">
+                <p class="title">CS CENTER</p>
+                <p class="phone">📞 010-7373-3564</p>
+                <p class="notice">유선상담은 진행하지 않습니다.<br>한성몰 카카오톡 채널을 이용해주세요.</p>
+                <p class="hours">운영 시간 : AM 10:00 ~ PM 06:00<br>점심 시간 : PM 1:00 ~ PM 02:00<br>휴무일 : SAT, SUN, OFF</p>
+                <p class="copyright">Copyright © Hansung Mall All Rights Reserved</p>
+                <p class="followus">FOLLOW US</p>
+                <p class="instagram">@INSTAGRAM</p>
+            </div>
+        </nav>
     </header>
 
-    <main>
-        <table id="cart" border="1">
-            <thead>
-                <tr>
-                    <th>상품</th>
-                    <th>수량</th>
-                    <th>가격</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-        <p id="total-price">총 합계 : 0원</p>
-        <button id= "clear-cart">장바구니 비우기</button>
+    <main class="cart-page">
+        <section class="cart-hero">
+            <p class="eyebrow">Your Cart</p>
+            <h1>담아둔 상품을 확인하세요</h1>
+            <p class="desc">Hansung Mall에서 고른 아이템을 한눈에 보고, 주문까지 간편하게 진행해보세요.</p>
+        </section>
+
+        <section class="cart-layout">
+            <div class="cart-items-panel">
+                <div class="panel-head">
+                    <div>
+                        <p class="eyebrow">ITEM LIST</p>
+                        <h2>장바구니</h2>
+                    </div>
+                    <button type="button" class="ghost-btn" onclick="location.href='/'">쇼핑 계속하기</button>
+                </div>
+                <div id="cart-items" class="cart-item-list"></div>
+            </div>
+
+            <aside class="cart-summary">
+                <h3>주문 요약</h3>
+                <p id="summary-count" class="summary-count">0개 상품</p>
+                <div class="summary-line">
+                    <span>상품 합계</span>
+                    <strong id="subtotal-price">0원</strong>
+                </div>
+                <div class="summary-line">
+                    <span>배송비</span>
+                    <strong>무료</strong>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <strong id="total-price">0원</strong>
+                </div>
+                <button type="button" id="clear-cart" class="ghost-btn full">장바구니 비우기</button>
+                <a href="/order" class="primary-btn full">주문하러 가기</a>
+            </aside>
+        </section>
     </main>
 
-    <script src = "cart_js.js"></script>
+    <script src="../js/cart_js.js"></script>
+    <script>
+        (function initMenuToggle() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navMenu = document.querySelector('.hamburger-menu');
+            if (!menuToggle || !navMenu) return;
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        })();
+    </script>
 </body>
 </html>
