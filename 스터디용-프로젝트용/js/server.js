@@ -13,7 +13,7 @@ const app = express();
 dotenv.config(); // .env 파일을 읽어 아래의 MYSQL 연결설정을 가능하게함.
 
 // MYSQL 연결 설정
-const DB = mysql.createConnection({
+const DB = mysql.createConnection({ // DB 연결
     host: process.env.DB_HOST, // 127.0.0.1 같은 DB서버 주소
     user: process.env.DB_USER, // DB 로그인 아이디
     password: process.env.DB_PASSWORD, // DB 로그인 비밀번호
@@ -42,6 +42,7 @@ DB.connect(err => {
 
 app.get('/', (req, res) => {
     const indexPath = path.join(__dirname, '..', 'html',  'index.html');
+    const sql = 'SELECT * FROM products;' // 상품 목록 불러오기
     res.sendFile(indexPath, (err) => {
         if (err) {
             console.error('sendFile error:', err);
@@ -49,6 +50,8 @@ app.get('/', (req, res) => {
         }
     });
 });
+
+app.post('/')
 
 const User = { id: 'admin', password: 'admin1234' }; // user id
 
