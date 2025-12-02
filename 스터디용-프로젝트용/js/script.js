@@ -1,123 +1,105 @@
-const newArrivals = [ 
-  { id: 101, name: "반팔 티셔츠", price: 20000, alt: "top", imgUrl: "../product/white_T-shirt.jpg" },
-  { id: 102, name: "반바지", price: 35000, alt: "bottom", imgUrl: "../product/Short_pants.jpg" },
-  { id: 103, name: "운동화", price: 43000, alt: "shoes", imgUrl: "../product/Shoes.jpg" },
-  { id: 104, name: "후드티", price: 60000, alt: "top", imgUrl: "../product/Blue_Hood.jpg" },
-];
+const USER_ID = 1; // 이름 통일
 
-const weeklyBest = [
-  { id: 201, name: "검정색 스웨터", price: 60000, alt: "top", imgUrl: "../product/Sweater.jpg", }, // 이미지 경로는 실제로 있는 파일로 변경하세요
-  { id: 202, name: "검정색 모자", price: 35000, alt: "cap", imgUrl: "../product/Black_cap.jpg",},
-  { id: 203, name: "흰색 셔츠", price: 30000, alt: "top", imgUrl: "../product/White_shirt.jpg",},
-  { id: 204, name: "와이드 청바지", price: 40000, alt: "bottom", imgUrl: "../product/Wide_pants.jpg"}
-];
+let allProducts = [];
 
-const bestSeller = [
-  { id: 301, name: "베스트셀러 자켓", price: 90000, alt: "outer", imgUrl: "../product/best_jacket.jpg" },
-  { id: 302, name: "베스트셀러 셔츠", price: 30000, alt: "top", imgUrl: "../product/best_shirt.jpg" },
-  { id: 303, name: "베스트셀러 바지", price: 40000, alt: "bottom", imgUrl: "../product/best_pants.jpg" },
-  { id: 304, name: "베스트셀러 가방", price: 70000, alt: "bag", imgUrl: "../product/best_bag.jpg", }, 
-];
+//DB에서 상품목록 가져오기
+async function fetchProducts() {
+  const res = await fetch("/api/products");
+  if (!res.ok) {
+    throw new Error("상품 목록 가져오기 실패");
+  }
+  allProducts = await res.json();
+}
 
-const allProducts = [...newArrivals, ...weeklyBest, ...bestSeller];
+const resolveImage = (path = "") => {
+  if (!path) return "../product/default.jpg";
+  if (path.startsWith("../")) return path;
+  if (path.startsWith("/")) return `..${path}`; // /product/…
+  return `../${path}`;
+};
 
+const renderSection = (productList, containerId) => {
+  const container = document.getElementById(containerId);
+  if (!container) return;
 
-// 각 객체배열로 저장된 상품들을 화면에 삽입
+  if (!productList || !productList.length) {
+    container.innerHTML = `<p class="empty">곧 업데이트됩니다.</p>`;
+    return;
+  }
+
+  const fmt = (n) => Number(n || 0).toLocaleString();
+  const html = productList.map(p => `
+      <article data-product-id="${p.id}">
+          <a href="/detail?id=${p.id}">
+              <img src="${resolveImage(p.main_image)}" alt="${p.name}">
+          </a>
+          <h3 class="product-name">${p.name ?? "상품"}</h3>
+          <p class="price">${fmt(p.price)}원</p>
+          <button type="button" onclick="addToCart(${p.id})">장바구니</button>
+      </article>
+  `).join("");
+  container.innerHTML = html;
+};
+
 function renderProducts() {
-    
-  // [1] 상품 목록(list)과 HTML 컨테이너 ID(containerId)를 받아서 처리하는 범용 함수
-    const renderSection = (productList, containerId) => {
-        const container = document.getElementById(containerId);
-        if (!container) return; 
+  if (!allProducts.length) return;
+  const newArrivals = allProducts.slice(0, 4);
+  const weeklyBest = allProducts.slice(4, 8);
+  const bestSeller = allProducts.slice(8, 12);
 
-        let htmlContent = '';
-        productList.forEach(function (product) {
-            // 상품을 표시하는 HTML 템플릿
-            htmlContent += `
-                <article data-product-id="${product.id}">
-                    <a href="/detail?id=${product.id}"> 
-                        <img src="${product.imgUrl}" alt="${product.alt}">
-                    </a>
-                    
-                    <p class="price">${product.price.toLocaleString()}원</p>
-                    
-                    <button onclick="addToCart(${product.id})">장바구니</button>
-                </article>
-            `;
-        });
-        
-        // 기존 제목/부제목을 유지하고, 그 뒤에 상품 목록을 추가
-        container.innerHTML = htmlContent; 
-    };
-
-    // [2] 정의된 범용 함수를 사용하여 세 섹션을 모두 렌더링
-    renderSection(newArrivals, 'new-arrivals-container');
-    renderSection(weeklyBest, 'weekly-best-container');
-    renderSection(bestSeller, 'best-seller-container');
+  renderSection(newArrivals, "new-arrivals-container");
+  renderSection(weeklyBest, "weekly-best-container");   // 실제 id에 맞춤
+  renderSection(bestSeller, "best-seller-container");
 }
 
-let cartItems = [];
-
-function addToCart(productId) {
-
-    const productToAdd = allProducts.find(product => product.id === productId);
-
-    if (productToAdd) {
-      // 2. 찾은 상품 객체를 cartItems 배열에 추가
-      cartItems.push(productToAdd);
-
-      console.log(
-        `상품 ID ${productId} (${productToAdd.name}) 장바구니에 담김.`
-      );
-      console.log("현재 장바구니 상태:", cartItems);
-
-      // 사용자에게 알림
-      alert(`${productToAdd.name} 장바구니 담기 성공!`);
-    }
-}
-
-// 이미지 누르면 나오는 상세 페이지
-// detail.html 에서 ?id=101 식으로 열면 해당 상품을 찾아 이미지/정보를 채워줌
-function loadProductDetail() {
-  const params = new URLSearchParams(window.location.search);
-  const idStr = params.get('id');
-  if (!idStr) return; // id 없으면 아무 것도 안 함
-
-  const productId = parseInt(idStr, 10);
-  const product = allProducts.find(p => p.id === productId);
-  if (!product) return;
-
-  // product-info 요소가 있으면 이름/가격/버튼 업데이트
-  const info = document.getElementById('product-info');
-  if (info) {
-    info.innerHTML = `
-      <h1>${product.name}</h1>
-      <p>가격: ${product.price.toLocaleString()}원</p>
-      <button id="add-to-cart-detail">장바구니 담기</button>
-    `;
-    const addBtn = document.getElementById('add-to-cart-detail');
-    if (addBtn) addBtn.addEventListener('click', () => addToCart(product.id));
+// 장바구니 추가
+async function addToCart(productId) {
+  if (!USER_ID) {
+    alert("로그인 후 이용해 주세요.");
+    return;
   }
-
-  // product-gallery가 있으면 이미지 한 장 표시 (원하면 여러장으로 확장 가능)
-  const gallery = document.getElementById('product-gallery');
-  if (gallery) {
-    // 빈 <img>를 직접 생성해서 넣음 (기존 HTML 구조 유지)
-    gallery.innerHTML = '';
-    const img = document.createElement('img');
-    img.src = product.imgUrl;
-    img.alt = product.alt || product.name;
-    img.style.width = '300px';
-    img.style.height = 'auto';
-    img.style.borderRadius = '8px';
-    gallery.appendChild(img);
+  try {
+    const res = await fetch("/api/cart", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        user_id: USER_ID,
+        product_id : productId,
+        quantity: 1,
+      }),
+    });
+    if (!res.ok) throw new Error("장바구니 추가 실패");
+    alert("장바구니에 담았습니다.")
+  } catch (err) {
+    console.error(err);
+    alert("장바구니 담기에 실패했습니다.")
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const listSection = document.getElementById('new-arrivals-container');
-  if (listSection) renderProducts();
+window.addToCart = addToCart;
 
-  const detailSection = document.getElementById('product-info');
-  if (detailSection) loadProductDetail();
+// 주문 생성
+async function createOrder() {
+  const body = { user_id: USER_ID, total_price: currentTotalPrice };
+  const res = await fetch("/api/order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error("주문 생성 실패");
+  return res.json(); // message만 쓰면 됨
+}
+
+// index 페이지에서만 실행되도록 설정
+document.addEventListener("DOMContentLoaded", async () => {
+  const listSection = document.getElementById("new-arrivals-container");
+  if (!listSection) return; // index가 아니면 아무 것도 안 함
+
+  try {
+    await fetchProducts();
+    renderProducts();
+  } catch (err) {
+    console.error(err);
+    alert("상품 목록을 불러오지 못했습니다.");
+  }
 });

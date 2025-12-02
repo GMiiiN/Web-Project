@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hansung Mall</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -59,90 +59,26 @@
          <section class="NEWARRIVAL">
             <h2>NEW ARRIVALS</h2>
             <p class="subtitle">새롭게 업데이트 된 신제품을 만나보세요.</p>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="outer">
-                <p class="price">10,000원</p>
-                <button>장바구니</button>
-            </article>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="top">
-                <p class="price">20,000원</p>
-                <button>장바구니</button>
-            </article>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="bottom">
-                <p class="price">30,000원</p>
-                <button>장바구니</button>
-            </article>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="acc/bag">
-                <p class="price">5,000원</p>
-                <button>장바구니</button>
-            </article>
-         </section>
+            <div id="new-arrivals-container"></div>   
+        </section>
 
         <section class="WEEKLYBESTITEM">
             <h2>WEEKLY BEST ITEM</h2>
             <p class="subtitle">이번주 가장 사랑받은 제품을 만나보세요.</p>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="outer">
-                <p class="price">10,000원</p>
-                <button>장바구니</button>
-            </article>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="top">
-                <p class="price">20,000원</p>
-                <button>장바구니</button>
-            </article>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="bottom">
-                <p class="price">30,000원</p>
-                <button>장바구니</button>
-            </article>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="acc/bag">
-                <p class="price">5,000원</p>
-                <button>장바구니</button>
-            </article>
-         </section>
+            <div id="weekly-best-container"></div>
+        </section>
 
          <section class="BESTSELLER">
             <h2>BEST SELLER</h2>
-            <p class="subtitle">가장 있기있는 베스트 제품을 만나보세요.</p>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="outer">
-                <p class="price">10,000원</p>
-                <button>장바구니</button>
-            </article>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="top">
-                <p class="price">20,000원</p>
-                <button>장바구니</button>
-            </article>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="bottom">
-                <p class="price">30,000원</p>
-                <button>장바구니</button>
-            </article>
-            <article>
-                <img src="https://via.placeholder.com/300x300.png?text=상품+이미지" alt="acc/bag">
-                <p class="price">5,000원</p>
-                <button>장바구니</button>
-            </article>
-         </section>
+            <p class="subtitle">가장 인기 있는 베스트 제품을 만나보세요.</p>
+            <div id="best-seller-container"></div>
+        </section>
     </main>
 
     <footer>
         <p>&copy; 2025 My Shop</p>
     </footer>
 
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navMenu = document.querySelector('.hamburger-menu');
-
-        menuToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');    
-        });
-    </script>
+    <script src="../js/script.js" defer></script>
 </body>
 </html>

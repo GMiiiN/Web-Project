@@ -20,5 +20,70 @@
   </div>
 
   <script src="../js/script.js"></script> <!-- 기능 따로 -->
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+
+    document.addEventListener("DOMContentLoaded", () =>{
+      if(!id){
+        alert("상품 id가 없습니다.");
+        return;
+      }
+      //1) DB에서 상품 정보 가져오기
+      fetch(`/api/products/${(id)}`)
+      .then(res => {
+        if(!res.ok) throw new Error('상품 조회 실패');
+        return res.json();
+      })
+      .then(p => {
+        //이름 / 가격 채우기
+        document.getElementById("product-name").innerHTML = p.name;
+        document.getElementById("product-price").innerHTML = 
+        `가격 : ${p.price.toLocalString()}원`;
+        // 이미지 채우기
+        const gallery = document.getElementById("product-gallery");
+        gallery.innerHTML=""; // 기존 내용 비우기
+
+        const img = document.createElement("img");
+        img.src = p.main_image || "../product/default.jpg";
+        img.alt = p.name;
+        img.style.width = "300px";
+        img.style.height = "auto";
+
+        gallery.appendChild(img);
+      })
+      .catch(err => {
+        console.error(err);
+        alert("상품 정보를 불러오지 못했습니다.");
+      });
+
+      //2) 장바구니 버튼에 이벤트 연결
+      const btn = document.getElementById("add-to-cart-detail");
+      btn.addEventListener("click", () => {
+        fetch('/api/cart', {
+          method: "POST",
+          headers: {"Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: 1,
+            product_id:Number(id),
+            quantity: 1
+          })
+        })
+        .then(res => {
+          if(!res.ok) throw new Error('장바구니 추가 실패');
+          return res.json();
+        })
+        .then(() => {
+          alert("장바구니에 담았습니다.");
+        })
+        .catch(err => {
+          console.error(err);
+          alert("장바구니 담기에 실패했습니다.");
+        });
+      });
+    });
+  </script>
+
 </body>
+
 </html>

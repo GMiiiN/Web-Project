@@ -6,109 +6,191 @@ const mysql = require('mysql2');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
-// express app 생성
 const app = express();
 
-// .env 파일의 환경변수 로드
-dotenv.config(); // .env 파일을 읽어 아래의 MYSQL 연결설정을 가능하게함.
+// .env 로드
+dotenv.config();
 
-// MYSQL 연결 설정
-const DB = mysql.createConnection({ // DB 연결
-    host: process.env.DB_HOST, // 127.0.0.1 같은 DB서버 주소
-    user: process.env.DB_USER, // DB 로그인 아이디
-    password: process.env.DB_PASSWORD, // DB 로그인 비밀번호
-    database: process.env.DB_NAME, //사용할 데이터베이스 이름
-    port: +process.env.DB_PORT // DB 포트 번호 + 는 문자열을 숫자로 변환
+// MySQL 연결
+const DB = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: +process.env.DB_PORT
 });
-app.use(express.json()); // 요청 본문이 JSON이면 자동으로 JS 객체로 파싱해 req.body에 넣음
-app.use(cors()); // CORS 허용 / 브라우저 교차 출처 정책 때문에 막히는걸 허용해줌.
-app.use(bodyParser.urlencoded({extended: true}));
+
+// 미들웨어
+app.use(express.json());
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
     secret: 'secret-key',
     resave: false,
     saveUninitialized: true
 }));
-// 정적 파일 서빙을 위한 미들웨어 추가 (경로를 안전하게 처리)
+
+// 정적 파일 제공(html/css/js/img 등)
 app.use(express.static(path.join(__dirname, '..')));
 
-//DB 연결 테스트
+// DB 연결 테스트
 DB.connect(err => {
-    if(err){
-        console.error("MySQL 연결 실패", err); //
+    if (err) {
+        console.error("❌ MySQL 연결 실패", err);
         return;
     }
-    console.log("MySQL 연결 성공"); // 성공시
-})
+    console.log("✅ MySQL 연결 성공");
+});
 
+// ------------------------------
+// HTML 라우트
+// ------------------------------
 app.get('/', (req, res) => {
-    const indexPath = path.join(__dirname, '..', 'html',  'index.html');
-    const sql = 'SELECT * FROM products;' // 상품 목록 불러오기
-    res.sendFile(indexPath, (err) => {
-        if (err) {
-            console.error('sendFile error:', err);
-            return res.status(err.status || 500).send('login.html을 찾을 수 없습니다.');
-        }
-    });
+    res.sendFile(path.join(__dirname, '..', 'html', 'index.html'));
 });
 
-app.post('/')
-
-const User = { id: 'admin', password: 'admin1234' }; // user id
-
-app.get(['/login', '/login/'], (req, res) => {
-    const loginPath = path.join(__dirname, '..', 'html', 'login.html');
-    res.sendFile(loginPath, err => {
-        if(err) {
-            console.error('sendFile Error', err);
-            return res.status(err.status || 500).send('login 페이지를 찾을 수 없습니다.');
-        }
-    });
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'html', 'login.html'));
 });
 
-app.post(['/login','/login/'], (req, res) => { // 로그인 페이지
-    console.log('login attempt body:', req.body); // 추가: 들어오는 폼 데이터 확인용 로그
-    const {userid, userpw} = req.body || {};
+app.get('/detail', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'html', 'detail.html'));
+});
+
+app.get('/cart', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'html', 'cart.html'));
+});
+
+app.get('/order', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'html', 'order.html'));
+});
+
+// ------------------------------
+// 로그인 기능 (임시 버전)
+// ------------------------------
+const User = { id: 'admin', password: 'admin1234' };
+
+app.post('/login', (req, res) => {
+    const { userid, userpw } = req.body;
+
     if (userid === User.id && userpw === User.password) {
         req.session.user = userid;
         res.sendFile(path.join(__dirname, '..', 'html', 'index.html'));
     } else {
-        res.send('<h1>Login Failed</h1><p>Invalid username or password.</p>');
+        res.send(`<h1>Login Failed</h1>`);
     }
-})
-
-app.get(['/detail', '/detail/'], (req, res) => {
-    const detailPath = path.join(__dirname, '..', 'html', 'detail.html');
-    res.sendFile(detailPath, err => {
-        if(err) {
-            console.error('sendFile Error', err);
-            return res.status(err.status || 500).send('상품 페이지를 찾을 수 없습니다.');
-        }
-    });
 });
 
-app.get(['/cart', '/cart/'], (req, res) => { // 장바구니 페이지
-    const cartPath = path.join(__dirname, '..', 'html', 'cart.html');
-    res.sendFile(cartPath, err => {
+// ------------------------------
+// 📦 상품 API
+// ------------------------------
+
+// 상품 목록 불러오기
+app.get('/api/products', (req, res) => {
+    const sql = "SELECT * FROM products";
+
+    DB.query(sql, (err, result) => {
         if (err) {
-            console.error('sendFile Error', err);
-            return res.status(err.status || 500).send('cart 페이지를 찾을 수 없습니다.');
+            console.error("상품 조회 실패:", err);
+            return res.status(500).json({ error: "DB 오류" });
         }
+        res.json(result);
     });
 });
 
-app.get(['/order', '/order/'], (req, res) => { // 주문 페이지
-    const cartPath = path.join(__dirname, '..', 'html', 'order.html');
-    res.sendFile(cartPath, err => {
+// 특정 상품 상세보기
+app.get('/api/products/:id', (req, res) => {
+    const sql = "SELECT * FROM products WHERE id = ?";
+    DB.query(sql, [req.params.id], (err, result) => {
+        if (err) return res.status(500).json({ error: "DB 오류" });
+        res.json(result[0]);
+    });
+});
+
+// ------------------------------
+// 🛒 장바구니 API
+// ------------------------------
+
+// 장바구니 담기
+app.post('/api/cart', (req, res) => {
+    const { user_id, product_id, quantity } = req.body;
+
+    const sql = `
+        INSERT INTO cart_items (user_id, product_id, quantity)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)
+    `;
+
+    DB.query(sql, [user_id, product_id, quantity], (err, result) => {
         if (err) {
-            console.error('sendFile Error', err);
-            return res.status(err.status || 500).send('order 페이지를 찾을 수 없습니다.');
+            console.error("장바구니 추가 실패:", err);
+            return res.status(500).json({ error: "DB 오류" });
         }
+        res.json({ message: "장바구니에 담았습니다." });
     });
 });
 
-app.post(['/order', '/order/'], (req, res) => {
-    console.log('order attempt body:'. req.body);
-})
+// 장바구니 목록
+app.get('/api/cart/:user_id', (req, res) => {
+    const user_id = req.params.user_id;
 
+    const sql = `
+        SELECT 
+            c.id AS cart_id,
+            p.name AS product_name,
+            p.price,
+            p.main_image,
+            c.quantity,
+            (p.price * c.quantity) AS total
+        FROM cart_items c
+        JOIN products p ON c.product_id = p.id
+        WHERE c.user_id = ?
+    `;
+
+    DB.query(sql, [user_id], (err, result) => {
+        if (err) {
+            console.error("장바구니 조회 실패:", err);
+            return res.status(500).json({ error: "DB 오류" });
+        }
+        res.json(result);
+    });
+});
+
+// 장바구니 삭제
+app.delete('/api/cart/:cart_id', (req, res) => {
+    const sql = "DELETE FROM cart_items WHERE id = ?";
+
+    DB.query(sql, [req.params.cart_id], (err, result) => {
+        if (err) {
+            console.error("장바구니 삭제 실패:", err);
+            return res.status(500).json({ error: "DB 오류" });
+        }
+        res.json({ message: "장바구니 삭제 완료" });
+    });
+});
+
+// ------------------------------
+// 💳 주문 API (기본 버전)
+// ------------------------------
+app.post('/api/order', (req, res) => {
+    const { user_id, total_price } = req.body;
+
+    const sql = `
+        INSERT INTO orders (user_id, total_price)
+        VALUES (?, ?)
+    `;
+
+    DB.query(sql, [user_id, total_price], (err, result) => {
+        if (err) {
+            console.error("주문 생성 실패:", err);
+            return res.status(500).json({ error: "DB 오류" });
+        }
+        res.json({ message: "주문 완료" });
+    });
+});
+
+
+// ------------------------------
 const PORT = 3000;
-app.listen(PORT, () => console.log(`Server Running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server Running at http://localhost:${PORT}`));
+
